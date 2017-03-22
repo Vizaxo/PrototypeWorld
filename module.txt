@@ -1,0 +1,9 @@
+{
+    "id" : "PrototypeWorld",
+    "version" : "0.1.0",
+    "author" : "Vizaxo",
+    "displayName" : "PrototypeWorld",
+    "description" : "",
+    "dependencies" : [],
+    "serverSideOnly" : false
+}
