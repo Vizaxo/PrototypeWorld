@@ -35,6 +35,7 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
+                .addProvider(new ProtoSurfaceProvider())
                 ;
     }
 }
