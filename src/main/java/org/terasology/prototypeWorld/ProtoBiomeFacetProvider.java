@@ -24,16 +24,15 @@ import org.terasology.world.generation.facets.SurfaceHeightFacet;
 import static java.lang.Math.abs;
 
 @Produces(ProtoBiomeFacet.class)
-@Updates(@Facet(SurfaceHeightFacet.class))
 public class ProtoBiomeFacetProvider implements FacetProvider {
 
     @Override
     public void process(GeneratingRegion region) {
         Border3D border = region.getBorderForFacet(ProtoBiomeFacet.class);
-        ProtoBiomeFacet biomeFacet = new ProtoBiomeFacet(region.getRegion(), border);
+        ProtoBiomeFacet biomeFacet = new ProtoBiomeFacet(region.getRegion(), border, ProtoBiome.PROTOTYPE, new ProtoBiomeRasterizer());
 
         for (BaseVector2i position : biomeFacet.getWorldRegion().contents()) {
-            ProtoBiome biome = new ProtoBiome();
+            ProtoBiome biome = ProtoBiome.PROTOTYPE;
             biomeFacet.setWorld(position, biome);
         }
         region.setRegionFacet(ProtoBiomeFacet.class, biomeFacet);

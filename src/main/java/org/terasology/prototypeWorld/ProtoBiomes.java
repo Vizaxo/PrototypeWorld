@@ -15,33 +15,13 @@
  */
 package org.terasology.prototypeWorld;
 
-import org.terasology.world.biomes.Biome;
+import org.terasology.world.biomes.BiomeRegistrator;
+import org.terasology.world.biomes.BiomeRegistry;
 
-public enum ProtoBiome implements Biome {
-    PROTOTYPE();
-
-    @Override
-    public String getId() {
-        return "PrototypeWorld:ProtoBiome";
-    }
+public class ProtoBiomes implements BiomeRegistrator {
 
     @Override
-    public String getName() {
-        return "Prototype biome";
-    }
-
-    @Override
-    public float getFog() {
-        return 0;
-    }
-
-    @Override
-    public float getHumidity() {
-        return 0;
-    }
-
-    @Override
-    public float getTemperature() {
-        return 0;
+    public void registerBiomes(BiomeRegistry registry) {
+        registry.registerBiome(ProtoBiome.PROTOTYPE);
     }
 }

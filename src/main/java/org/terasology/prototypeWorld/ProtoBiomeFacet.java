@@ -20,8 +20,22 @@ import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.facets.base.BaseObjectFacet2D;
 
 public class ProtoBiomeFacet extends BaseObjectFacet2D<ProtoBiome> {
-    
-    public ProtoBiomeFacet(Region3i targetRegion, Border3D border) {
+
+    ProtoBiome biome;
+    ProtoBiomeRasterizer rasterizer;
+
+    public ProtoBiomeFacet(Region3i targetRegion, Border3D border, ProtoBiome biome, ProtoBiomeRasterizer rasterizer) {
         super(targetRegion, border, ProtoBiome.class);
+        rasterizer.initialize();
+        this.biome = biome;
+        this.rasterizer = rasterizer;
+    }
+
+    public ProtoBiome getBiome() {
+        return biome;
+    }
+
+    public ProtoBiomeRasterizer getRasterizer() {
+        return rasterizer;
     }
 }

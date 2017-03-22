@@ -17,26 +17,31 @@ package org.terasology.prototypeWorld;
 
 import org.terasology.math.ChunkMath;
 import org.terasology.math.geom.Vector3i;
+import org.terasology.registry.CoreRegistry;
+import org.terasology.world.block.Block;
+import org.terasology.world.block.BlockManager;
 import org.terasology.world.chunks.CoreChunk;
 import org.terasology.world.generation.Region;
 import org.terasology.world.generation.WorldRasterizer;
+import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
-public class ProtoRasterizer implements WorldRasterizer {
+public class ProtoBiomeRasterizer implements WorldRasterizer {
+
+    private Block grass;
 
     @Override
     public void initialize() {
+        grass = CoreRegistry.get(BlockManager.class).getBlock("Core:Dirt");
     }
 
     @Override
     public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-        ProtoBiomeFacet protoBiomeFacet = chunkRegion.getFacet(ProtoBiomeFacet.class);
-        ProtoBiomeRasterizer protoBiomeRasterizer = protoBiomeFacet.getRasterizer();
-        protoBiomeRasterizer.generateChunk(chunk, chunkRegion);
-
-        ProtoBiome protoBiome = chunkRegion.getFacet(ProtoBiomeFacet.class).getBiome();
+        SurfaceHeightFacet surfaceHeightFacet = chunkRegion.getFacet(SurfaceHeightFacet.class);
         for (Vector3i position : chunkRegion.getRegion()) {
-            Vector3i worldPos = ChunkMath.calcBlockPos(position);
-            chunk.setBiome(worldPos.x(), worldPos.y(), worldPos.z(), protoBiome);
+            float surfaceHeight = surfaceHeightFacet.getWorld(position.x, position.z);
+            if (position.y < surfaceHeight) {
+                chunk.setBlock(ChunkMath.calcBlockPos(position), grass);
+            }
         }
     }
 }
