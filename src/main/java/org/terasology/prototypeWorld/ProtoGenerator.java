@@ -32,12 +32,23 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
         super(uri);
     }
 
+    /**
+     * Creates the world, with our added customizations.
+     * @return the WorldBuilder
+     */
     @Override
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
+
+                //Set the initial global surface height
                 .addProvider(new ProtoSurfaceProvider())
+
+                //Add the biome
+                //The biome changes the global surface height
                 .addProvider(new ProtoBiomeFacetProvider())
+
+                //The biome rasterizes all of its columns
                 .addRasterizer(new ProtoRasterizer())
                 ;
     }

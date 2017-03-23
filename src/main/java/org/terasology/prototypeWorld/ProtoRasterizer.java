@@ -23,18 +23,21 @@ public class ProtoRasterizer implements WorldRasterizer {
 
     @Override
     public void initialize() {
+        //Nothing needed
     }
 
     @Override
     public void generateChunk(CoreChunk chunk, Region chunkRegion) {
         ProtoBiomeFacet protoBiomeFacet = chunkRegion.getFacet(ProtoBiomeFacet.class);
 
+        //Do for all columns in the chunk
         for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
             for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
-
+                //Get the biome to generate the column
                 ProtoBiome protoBiome = protoBiomeFacet.get(chunkX, chunkZ);
                 protoBiome.generateColumn(chunk, chunkRegion, chunk.chunkToWorldPositionX(chunkX), chunk.chunkToWorldPositionZ(chunkZ));
 
+                //Set the biome for every block in the column, so that the rest of the game can use it
                 for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
                     chunk.setBiome(chunkX, chunkY, chunkZ, protoBiome);
                 }

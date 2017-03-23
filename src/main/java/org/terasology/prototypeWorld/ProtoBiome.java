@@ -24,12 +24,30 @@ import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
 public interface ProtoBiome extends Biome {
 
+    /**
+     * Set the seed for the generator, if needed.
+     * @param seed the seed
+     */
     default void setSeed(long seed) {}
 
+    /**
+     * Calculate the new surface height for a position, based on the global height at that position.
+     * By default, don't change the height.
+     * @param pos the world position of the column
+     * @param height the global height at that position
+     * @return the new height for the column
+     */
     default float getNewSurfaceHeight(BaseVector2i pos, float height) {
         return height;
     }
 
+    /**
+     * Generate a column in the biome. This should add blocks, but should not change the surface height.
+     * @param chunk the chunk in which the column is located
+     * @param chunkRegion the chunkRegion in which the chunk is located
+     * @param worldX the global x position of the column
+     * @param worldZ the global z position of the column
+     */
     void generateColumn(CoreChunk chunk, Region chunkRegion, int worldX, int worldZ);
 
     @Override

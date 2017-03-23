@@ -26,14 +26,22 @@ import org.terasology.world.generation.facets.SurfaceHeightFacet;
 @Produces(SurfaceHeightFacet.class)
 public class ProtoSurfaceProvider implements FacetProvider {
 
+    /**
+     * Calculates the basic heightmap for the world.
+     * @param region the region we are generating
+     */
     public void process(GeneratingRegion region) {
+        //Create the facet
         Border3D border = region.getBorderForFacet(SurfaceHeightFacet.class);
         SurfaceHeightFacet surfaceHeightFacet = new SurfaceHeightFacet(region.getRegion(), border);
 
+        //Set the base surface height at each position covered by the facet
         Rect2i processRegion = surfaceHeightFacet.getWorldRegion();
         for (BaseVector2i position : processRegion.contents()) {
             surfaceHeightFacet.setWorld(position, 100);
         }
+
+        //Apply the facet
         region.setRegionFacet(SurfaceHeightFacet.class, surfaceHeightFacet);
     }
 }

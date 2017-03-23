@@ -39,6 +39,7 @@ public enum ProtoPlains implements ProtoBiome {
 
     @Override
     public void setSeed(long seed) {
+        //A basic simplex noise to simulate basic hills
         plainsNoise = new SubSampledNoise(new SimplexNoise(seed), new Vector2f(0.005f, 0.005f), 1);
     }
 
@@ -54,6 +55,7 @@ public enum ProtoPlains implements ProtoBiome {
 
     @Override
     public float getNewSurfaceHeight(BaseVector2i pos, float height) {
+        //Add some small hills
         return height + plainsNoise.noise(pos.x(), pos.y()) * 3;
     }
 
@@ -62,6 +64,7 @@ public enum ProtoPlains implements ProtoBiome {
         SurfaceHeightFacet surfaceHeightFacet = chunkRegion.getFacet(SurfaceHeightFacet.class);
         float surfaceHeight = surfaceHeightFacet.getWorld(worldX, worldZ);
 
+        //Set everything underneath the surface to grass
         for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
             if (chunk.chunkToWorldPositionY(chunkY) < surfaceHeight) {
                 chunk.setBlock(ChunkMath.calcBlockPosX(worldX), chunkY, ChunkMath.calcBlockPosZ(worldZ), grass);

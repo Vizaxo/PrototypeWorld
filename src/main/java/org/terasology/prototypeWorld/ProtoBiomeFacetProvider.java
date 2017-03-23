@@ -30,18 +30,22 @@ public class ProtoBiomeFacetProvider implements FacetProvider {
 
     @Override
     public void process(GeneratingRegion region) {
+        //Create the facet
         Border3D border = region.getBorderForFacet(ProtoBiomeFacet.class);
         ProtoBiomeFacet biomeFacet = new ProtoBiomeFacet(region.getRegion(), border);
 
         SurfaceHeightFacet surfaceHeightFacet = region.getRegionFacet(SurfaceHeightFacet.class);
 
         for (BaseVector2i pos : biomeFacet.getWorldRegion().contents()) {
+            //Set the biome
             ProtoBiome biome = ProtoPlains.PLAINS;
             biomeFacet.setWorld(pos, biome);
 
+            //Update the world height based on the biome
             float height = surfaceHeightFacet.getWorld(pos);
             surfaceHeightFacet.setWorld(pos, biome.getNewSurfaceHeight(pos, height));
         }
+        //Apply the facet
         region.setRegionFacet(ProtoBiomeFacet.class, biomeFacet);
     }
 }
