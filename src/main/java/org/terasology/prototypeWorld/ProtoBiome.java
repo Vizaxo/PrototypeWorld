@@ -15,33 +15,35 @@
  */
 package org.terasology.prototypeWorld;
 
+import org.terasology.math.geom.BaseVector2i;
 import org.terasology.world.biomes.Biome;
+import org.terasology.world.chunks.CoreChunk;
+import org.terasology.world.generation.GeneratingRegion;
+import org.terasology.world.generation.Region;
+import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
-public enum ProtoBiome implements Biome {
-    PROTOTYPE();
+public interface ProtoBiome extends Biome {
 
-    @Override
-    public String getId() {
-        return "PrototypeWorld:ProtoBiome";
+    default void setSeed(long seed) {}
+
+    default float getNewSurfaceHeight(BaseVector2i pos, float height) {
+        return height;
     }
 
-    @Override
-    public String getName() {
-        return "Prototype biome";
-    }
+    void generateColumn(CoreChunk chunk, Region chunkRegion, int worldX, int worldZ);
 
     @Override
-    public float getFog() {
+    default float getFog() {
         return 0;
     }
 
     @Override
-    public float getHumidity() {
+    default float getHumidity() {
         return 0;
     }
 
     @Override
-    public float getTemperature() {
+    default float getTemperature() {
         return 0;
     }
 }

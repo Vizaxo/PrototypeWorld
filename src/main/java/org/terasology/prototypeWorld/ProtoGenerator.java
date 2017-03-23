@@ -24,6 +24,7 @@ import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
 
 @RegisterWorldGenerator(id = "PrototypeGenerator", displayName = "Prototype generator")
 public class ProtoGenerator extends BaseFacetedWorldGenerator {
+
     @In
     private WorldGeneratorPluginLibrary worldGeneratorPluginLibrary;
 

@@ -22,6 +22,6 @@ public class ProtoBiomes implements BiomeRegistrator {
 
     @Override
     public void registerBiomes(BiomeRegistry registry) {
-        registry.registerBiome(ProtoBiome.PROTOTYPE);
+        registry.registerBiome(ProtoPlains.PLAINS);
     }
 }

@@ -36,5 +36,4 @@ public class ProtoSurfaceProvider implements FacetProvider {
         }
         region.setRegionFacet(SurfaceHeightFacet.class, surfaceHeightFacet);
     }
-
 }

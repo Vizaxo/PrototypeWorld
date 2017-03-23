@@ -15,8 +15,6 @@
  */
 package org.terasology.prototypeWorld;
 
-import org.terasology.math.ChunkMath;
-import org.terasology.math.geom.Vector3i;
 import org.terasology.world.chunks.CoreChunk;
 import org.terasology.world.generation.Region;
 import org.terasology.world.generation.WorldRasterizer;
@@ -30,13 +28,17 @@ public class ProtoRasterizer implements WorldRasterizer {
     @Override
     public void generateChunk(CoreChunk chunk, Region chunkRegion) {
         ProtoBiomeFacet protoBiomeFacet = chunkRegion.getFacet(ProtoBiomeFacet.class);
-        ProtoBiomeRasterizer protoBiomeRasterizer = protoBiomeFacet.getRasterizer();
-        protoBiomeRasterizer.generateChunk(chunk, chunkRegion);
 
-        ProtoBiome protoBiome = chunkRegion.getFacet(ProtoBiomeFacet.class).getBiome();
-        for (Vector3i position : chunkRegion.getRegion()) {
-            Vector3i worldPos = ChunkMath.calcBlockPos(position);
-            chunk.setBiome(worldPos.x(), worldPos.y(), worldPos.z(), protoBiome);
+        for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+            for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+
+                ProtoBiome protoBiome = protoBiomeFacet.get(chunkX, chunkZ);
+                protoBiome.generateColumn(chunk, chunkRegion, chunk.chunkToWorldPositionX(chunkX), chunk.chunkToWorldPositionZ(chunkZ));
+
+                for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                    chunk.setBiome(chunkX, chunkY, chunkZ, protoBiome);
+                }
+            }
         }
     }
 }

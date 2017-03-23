@@ -15,25 +15,32 @@
  */
 package org.terasology.prototypeWorld;
 
-import org.terasology.entitySystem.Component;
 import org.terasology.math.geom.BaseVector2i;
-import org.terasology.world.biomes.Biome;
 import org.terasology.world.generation.*;
 import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
-import static java.lang.Math.abs;
-
 @Produces(ProtoBiomeFacet.class)
+@Updates(@Facet(SurfaceHeightFacet.class))
 public class ProtoBiomeFacetProvider implements FacetProvider {
+
+    @Override
+    public void setSeed(long seed) {
+        ProtoPlains.PLAINS.setSeed(seed);
+    }
 
     @Override
     public void process(GeneratingRegion region) {
         Border3D border = region.getBorderForFacet(ProtoBiomeFacet.class);
-        ProtoBiomeFacet biomeFacet = new ProtoBiomeFacet(region.getRegion(), border, ProtoBiome.PROTOTYPE, new ProtoBiomeRasterizer());
+        ProtoBiomeFacet biomeFacet = new ProtoBiomeFacet(region.getRegion(), border);
 
-        for (BaseVector2i position : biomeFacet.getWorldRegion().contents()) {
-            ProtoBiome biome = ProtoBiome.PROTOTYPE;
-            biomeFacet.setWorld(position, biome);
+        SurfaceHeightFacet surfaceHeightFacet = region.getRegionFacet(SurfaceHeightFacet.class);
+
+        for (BaseVector2i pos : biomeFacet.getWorldRegion().contents()) {
+            ProtoBiome biome = ProtoPlains.PLAINS;
+            biomeFacet.setWorld(pos, biome);
+
+            float height = surfaceHeightFacet.getWorld(pos);
+            surfaceHeightFacet.setWorld(pos, biome.getNewSurfaceHeight(pos, height));
         }
         region.setRegionFacet(ProtoBiomeFacet.class, biomeFacet);
     }
