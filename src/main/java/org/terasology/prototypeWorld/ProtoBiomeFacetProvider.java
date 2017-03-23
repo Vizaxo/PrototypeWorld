@@ -26,6 +26,7 @@ public class ProtoBiomeFacetProvider implements FacetProvider {
     @Override
     public void setSeed(long seed) {
         ProtoPlains.PLAINS.setSeed(seed);
+        ProtoMountains.MOUNTAINS.setSeed(seed);
     }
 
     @Override
@@ -37,8 +38,8 @@ public class ProtoBiomeFacetProvider implements FacetProvider {
         SurfaceHeightFacet surfaceHeightFacet = region.getRegionFacet(SurfaceHeightFacet.class);
 
         for (BaseVector2i pos : biomeFacet.getWorldRegion().contents()) {
-            //Set the biome
-            ProtoBiome biome = ProtoPlains.PLAINS;
+            //Set negative x positions to be plains, and positive x positions to be mountains
+            ProtoBiome biome = pos.x() <= 0 ? ProtoPlains.PLAINS : ProtoMountains.MOUNTAINS;
             biomeFacet.setWorld(pos, biome);
 
             //Update the world height based on the biome

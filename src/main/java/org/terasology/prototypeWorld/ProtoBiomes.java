@@ -24,5 +24,6 @@ public class ProtoBiomes implements BiomeRegistrator {
     public void registerBiomes(BiomeRegistry registry) {
         //Register all of} the biomes with the game
         registry.registerBiome(ProtoPlains.PLAINS);
+        registry.registerBiome(ProtoMountains.MOUNTAINS);
     }
 }
