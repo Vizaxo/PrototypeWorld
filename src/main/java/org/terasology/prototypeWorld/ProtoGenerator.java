@@ -17,16 +17,25 @@ package org.terasology.prototypeWorld;
 
 import org.terasology.engine.SimpleUri;
 import org.terasology.registry.In;
+import org.terasology.world.block.Block;
+import org.terasology.world.block.BlockManager;
+import org.terasology.world.chunks.CoreChunk;
 import org.terasology.world.generation.BaseFacetedWorldGenerator;
+import org.terasology.world.generation.Region;
 import org.terasology.world.generation.WorldBuilder;
+import org.terasology.world.generation.WorldRasterizer;
 import org.terasology.world.generator.RegisterWorldGenerator;
 import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
+import org.terasology.world.viewer.zones.Zone;
 
 @RegisterWorldGenerator(id = "PrototypeGenerator", displayName = "Prototype generator")
 public class ProtoGenerator extends BaseFacetedWorldGenerator {
 
     @In
     private WorldGeneratorPluginLibrary worldGeneratorPluginLibrary;
+
+    @In
+    private BlockManager blockManager;
 
     public ProtoGenerator(SimpleUri uri) {
         super(uri);
@@ -40,16 +49,27 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
+                .addZone(new Zone(pos -> pos.y() < 110)
+                        .addProvider(new ProtoSurfaceProvider())
+                        .addProvider(new ProtoBiomeFacetProvider())
+                        .addRasterizer(new ProtoRasterizer()))
+                .addZone(new Zone(pos -> pos.z() % 20 == 0 && pos.y() == 120)
+                        .addRasterizer(new WorldRasterizer() {
+                            @Override
+                            public void initialize() {}
 
-                //Set the initial global surface height
-                .addProvider(new ProtoSurfaceProvider())
-
-                //Add the biome
-                //The biome changes the global surface height
-                .addProvider(new ProtoBiomeFacetProvider())
-
-                //The biome rasterizes all of its columns
-                .addRasterizer(new ProtoRasterizer())
+                            @Override
+                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                Block grass = blockManager.getBlock("Core:Grass");
+                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                            chunk.setBlock(chunkX, chunkY, chunkZ, grass);
+                                        }
+                                    }
+                                }
+                            }
+                        }))
                 ;
     }
 }
