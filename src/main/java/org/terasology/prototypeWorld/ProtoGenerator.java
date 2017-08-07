@@ -24,8 +24,10 @@ import org.terasology.world.generation.BaseFacetedWorldGenerator;
 import org.terasology.world.generation.Region;
 import org.terasology.world.generation.WorldBuilder;
 import org.terasology.world.generation.WorldRasterizer;
+import org.terasology.world.generation.facets.SurfaceHeightFacet;
 import org.terasology.world.generator.RegisterWorldGenerator;
 import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
+import org.terasology.world.viewer.layers.engine.SurfaceHeightFacetLayer;
 import org.terasology.world.viewer.zones.Zone;
 
 @RegisterWorldGenerator(id = "PrototypeGenerator", displayName = "Prototype generator")
@@ -54,6 +56,26 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer())
                         .addPreviewLayer(new ProtoBiomeFacetLayer()))
+                .addZone(new Zone("Underground", (pos, region) ->
+                        pos.y() <= (region.getFacet(SurfaceHeightFacet.class).getWorld(pos.x(), pos.getZ()) - 1))
+                        .addRasterizer(new WorldRasterizer() {
+                            @Override
+                            public void initialize() {
+                            }
+
+                            @Override
+                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                Block stone = blockManager.getBlock("core:stone");
+                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                            chunk.setBlock(chunkX, chunkY, chunkZ, stone);
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .addPreviewLayer(new SurfaceHeightFacetLayer()))
                 .addZone(new Zone("Stripes", pos -> pos.z() % 20 == 0 && pos.y() == 120)
                         .addRasterizer(new WorldRasterizer() {
                             @Override
