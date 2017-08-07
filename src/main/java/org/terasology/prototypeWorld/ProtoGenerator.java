@@ -52,7 +52,8 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                 .addZone(new Zone("Surface", pos -> pos.y() < 110)
                         .addProvider(new ProtoSurfaceProvider())
                         .addProvider(new ProtoBiomeFacetProvider())
-                        .addRasterizer(new ProtoRasterizer()))
+                        .addRasterizer(new ProtoRasterizer())
+                        .addPreviewLayer(new ProtoBiomeFacetLayer()))
                 .addZone(new Zone("Stripes", pos -> pos.z() % 20 == 0 && pos.y() == 120)
                         .addRasterizer(new WorldRasterizer() {
                             @Override

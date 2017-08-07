@@ -23,6 +23,6 @@ import org.terasology.world.viewer.layers.ZOrder;
 public class ProtoBiomeFacetLayer extends NominalFacetLayer<ProtoBiome> {
 
     public ProtoBiomeFacetLayer() {
-        super(ProtoBiomeFacet.class, ProtoBiome::getPreviewColor);
+        super(ProtoBiomeFacet.class, biome -> biome.getPreviewColor().alterAlpha(10));
     }
 }
