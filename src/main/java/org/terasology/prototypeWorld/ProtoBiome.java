@@ -16,19 +16,26 @@
 package org.terasology.prototypeWorld;
 
 import org.terasology.math.geom.BaseVector2i;
+import org.terasology.rendering.nui.Color;
 import org.terasology.world.biomes.Biome;
 import org.terasology.world.chunks.CoreChunk;
-import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Region;
-import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
-public interface ProtoBiome extends Biome {
+public abstract class ProtoBiome implements Biome {
+
+    protected Color previewColor;
+
+    ProtoBiome(Color previewColor) {
+        this.previewColor = previewColor;
+    }
+
+    void initialize() {}
 
     /**
      * Set the seed for the generator, if needed.
      * @param seed the seed
      */
-    default void setSeed(long seed) {}
+    void setSeed(long seed) {}
 
     /**
      * Calculate the new surface height for a position, based on the global height at that position.
@@ -37,7 +44,7 @@ public interface ProtoBiome extends Biome {
      * @param height the global height at that position
      * @return the new height for the column
      */
-    default float getNewSurfaceHeight(BaseVector2i pos, float height) {
+    float getNewSurfaceHeight(BaseVector2i pos, float height) {
         return height;
     }
 
@@ -48,20 +55,24 @@ public interface ProtoBiome extends Biome {
      * @param worldX the global x position of the column
      * @param worldZ the global z position of the column
      */
-    void generateColumn(CoreChunk chunk, Region chunkRegion, int worldX, int worldZ);
+    abstract void generateColumn(CoreChunk chunk, Region chunkRegion, int worldX, int worldZ);
 
     @Override
-    default float getFog() {
+    public float getFog() {
         return 0;
     }
 
     @Override
-    default float getHumidity() {
+    public float getHumidity() {
         return 0;
     }
 
     @Override
-    default float getTemperature() {
+    public float getTemperature() {
         return 0;
+    }
+
+    Color getPreviewColor() {
+        return previewColor;
     }
 }

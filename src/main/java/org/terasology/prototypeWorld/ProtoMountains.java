@@ -19,19 +19,34 @@ import org.terasology.math.ChunkMath;
 import org.terasology.math.geom.BaseVector2i;
 import org.terasology.math.geom.Vector2f;
 import org.terasology.registry.CoreRegistry;
-import org.terasology.utilities.procedural.*;
+import org.terasology.rendering.nui.Color;
+import org.terasology.utilities.procedural.BrownianNoise;
+import org.terasology.utilities.procedural.Noise;
+import org.terasology.utilities.procedural.PerlinNoise;
+import org.terasology.utilities.procedural.SubSampledNoise;
 import org.terasology.world.block.Block;
 import org.terasology.world.block.BlockManager;
 import org.terasology.world.chunks.CoreChunk;
 import org.terasology.world.generation.Region;
 import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
-public enum ProtoMountains implements ProtoBiome {
-    MOUNTAINS;
+public class ProtoMountains extends ProtoBiome {
+    public static final ProtoMountains MOUNTAINS = new ProtoMountains(Color.CYAN);
 
-    Block grass = CoreRegistry.get(BlockManager.class).getBlock("Core:Grass");
-    Block stone = CoreRegistry.get(BlockManager.class).getBlock("Core:Stone");
+    private Block grass;
+    private Block stone;
     private Noise mountainNoise;
+
+    private ProtoMountains(Color previewColor) {
+        super(previewColor);
+    }
+
+    @Override
+    public void initialize() {
+        BlockManager blockManager = CoreRegistry.get(BlockManager.class);
+        grass = blockManager.getBlock("Core:Grass");
+        stone = blockManager.getBlock("Core:Stone");
+    }
 
     @Override
     public void setSeed(long seed) {

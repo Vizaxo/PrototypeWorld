@@ -16,12 +16,23 @@
 package org.terasology.prototypeWorld;
 
 import org.terasology.math.geom.BaseVector2i;
-import org.terasology.world.generation.*;
+import org.terasology.world.generation.Border3D;
+import org.terasology.world.generation.Facet;
+import org.terasology.world.generation.FacetProvider;
+import org.terasology.world.generation.GeneratingRegion;
+import org.terasology.world.generation.Produces;
+import org.terasology.world.generation.Updates;
 import org.terasology.world.generation.facets.SurfaceHeightFacet;
 
 @Produces(ProtoBiomeFacet.class)
 @Updates(@Facet(SurfaceHeightFacet.class))
 public class ProtoBiomeFacetProvider implements FacetProvider {
+
+    @Override
+    public void initialize() {
+        ProtoPlains.PLAINS.initialize();
+        ProtoMountains.MOUNTAINS.initialize();
+    }
 
     @Override
     public void setSeed(long seed) {
