@@ -49,11 +49,11 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
-                .addZone(new Zone(pos -> pos.y() < 110)
+                .addZone(new Zone("Surface", pos -> pos.y() < 110)
                         .addProvider(new ProtoSurfaceProvider())
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer()))
-                .addZone(new Zone(pos -> pos.z() % 20 == 0 && pos.y() == 120)
+                .addZone(new Zone("Stripes", pos -> pos.z() % 20 == 0 && pos.y() == 120)
                         .addRasterizer(new WorldRasterizer() {
                             @Override
                             public void initialize() {}
