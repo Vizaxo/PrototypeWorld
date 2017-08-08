@@ -24,11 +24,16 @@ import org.terasology.world.generation.BaseFacetedWorldGenerator;
 import org.terasology.world.generation.Region;
 import org.terasology.world.generation.WorldBuilder;
 import org.terasology.world.generation.WorldRasterizer;
-import org.terasology.world.generation.facets.SurfaceHeightFacet;
 import org.terasology.world.generator.RegisterWorldGenerator;
 import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
 import org.terasology.world.viewer.layers.engine.SurfaceHeightFacetLayer;
+import org.terasology.world.zones.LayeredZoneManager;
+import org.terasology.world.zones.LayeredZoneRegionFunction;
 import org.terasology.world.zones.Zone;
+
+import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.MEDIUM_UNDERGROUND;
+import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.SHALLOW_UNDERGROUND;
+import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.SURFACE;
 
 @RegisterWorldGenerator(id = "PrototypeGenerator", displayName = "Prototype generator")
 public class ProtoGenerator extends BaseFacetedWorldGenerator {
@@ -49,50 +54,71 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
      */
     @Override
     protected WorldBuilder createWorld() {
+        LayeredZoneManager layeredZoneManager = new LayeredZoneManager();
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
-                .addZone(new Zone("Surface", pos -> pos.y() < 121)
+                .addZone(new Zone("Surface", new LayeredZoneRegionFunction(10, 10, SURFACE, layeredZoneManager))
                         .addProvider(new ProtoSurfaceProvider())
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer())
                         .addPreviewLayer(new ProtoBiomeFacetLayer())
-                        .addZone(new Zone("Underground", (pos, region) ->
-                                pos.y() <= (region.getFacet(SurfaceHeightFacet.class).getWorld(pos.x(), pos.getZ()) - 1))
-                                .addRasterizer(new WorldRasterizer() {
-                                    @Override
-                                    public void initialize() {
-                                    }
+                        .addPreviewLayer(new SurfaceHeightFacetLayer()))
+                .addZone(new Zone("Underground",
+                        new LayeredZoneRegionFunction(100, 100, MEDIUM_UNDERGROUND, layeredZoneManager))
+                        .addRasterizer(new WorldRasterizer() {
+                            @Override
+                            public void initialize() {
+                            }
 
-                                    @Override
-                                    public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-                                        Block stone = blockManager.getBlock("core:stone");
-                                        for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
-                                            for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
-                                                for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
-                                                    chunk.setBlock(chunkX, chunkY, chunkZ, stone);
-                                                }
-                                            }
+                            @Override
+                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                Block stone = blockManager.getBlock("core:stone");
+                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                            chunk.setBlock(chunkX, chunkY, chunkZ, stone);
                                         }
                                     }
-                                })
-                                .addPreviewLayer(new SurfaceHeightFacetLayer()))
-                        .addZone(new Zone("Stripes", pos -> pos.x() == (pos.y() - 100))
-                                .addRasterizer(new WorldRasterizer() {
-                                    @Override
-                                    public void initialize() {}
+                                }
+                            }
+                        })
+                        .addPreviewLayer(new SurfaceHeightFacetLayer()))
+                .addZone(new Zone("Glass underfoot",
+                        new LayeredZoneRegionFunction(1, 1, SHALLOW_UNDERGROUND, layeredZoneManager))
+                        .addRasterizer(new WorldRasterizer() {
+                            @Override
+                            public void initialize() {
+                            }
 
-                                    @Override
-                                    public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-                                        Block grass = blockManager.getBlock("Core:glass");
-                                        for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
-                                            for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
-                                                for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
-                                                    chunk.setBlock(chunkX, chunkY, chunkZ, grass);
-                                                }
-                                            }
+                            @Override
+                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                Block glass = blockManager.getBlock("core:glass");
+                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                            chunk.setBlock(chunkX, chunkY, chunkZ, glass);
                                         }
                                     }
-                                })))
+                                }
+                            }
+                        }))
+                .addZone(new Zone("Diagonal glass wall", pos -> pos.x() == (pos.y() - 100))
+                        .addRasterizer(new WorldRasterizer() {
+                            @Override
+                            public void initialize() {}
+
+                            @Override
+                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                Block grass = blockManager.getBlock("Core:glass");
+                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                            chunk.setBlock(chunkX, chunkY, chunkZ, grass);
+                                        }
+                                    }
+                                }
+                            }
+                        }))
                 .addZone(new Zone("Testing", p -> false))
                 ;
     }
