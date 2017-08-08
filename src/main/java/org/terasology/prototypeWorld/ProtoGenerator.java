@@ -62,7 +62,24 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer())
                         .addPreviewLayer(new ProtoBiomeFacetLayer())
-                        .addPreviewLayer(new SurfaceHeightFacetLayer()))
+                        .addPreviewLayer(new SurfaceHeightFacetLayer())
+                        .addZone(new Zone("Diagonal glass wall", pos -> pos.x() == (pos.y() - 100))
+                                .addRasterizer(new WorldRasterizer() {
+                                    @Override
+                                    public void initialize() {}
+
+                                    @Override
+                                    public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                        Block grass = blockManager.getBlock("Core:glass");
+                                        for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                            for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                                for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                                    chunk.setBlock(chunkX, chunkY, chunkZ, grass);
+                                                }
+                                            }
+                                        }
+                                    }
+                                })))
                 .addZone(new Zone("Underground",
                         new LayeredZoneRegionFunction(100, 100, MEDIUM_UNDERGROUND, layeredZoneManager))
                         .addRasterizer(new WorldRasterizer() {
@@ -97,23 +114,6 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                                     for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
                                         for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
                                             chunk.setBlock(chunkX, chunkY, chunkZ, glass);
-                                        }
-                                    }
-                                }
-                            }
-                        }))
-                .addZone(new Zone("Diagonal glass wall", pos -> pos.x() == (pos.y() - 100))
-                        .addRasterizer(new WorldRasterizer() {
-                            @Override
-                            public void initialize() {}
-
-                            @Override
-                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-                                Block grass = blockManager.getBlock("Core:glass");
-                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
-                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
-                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
-                                            chunk.setBlock(chunkX, chunkY, chunkZ, grass);
                                         }
                                     }
                                 }
