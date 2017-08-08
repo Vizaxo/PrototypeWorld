@@ -28,7 +28,7 @@ import org.terasology.world.generation.facets.SurfaceHeightFacet;
 import org.terasology.world.generator.RegisterWorldGenerator;
 import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
 import org.terasology.world.viewer.layers.engine.SurfaceHeightFacetLayer;
-import org.terasology.world.viewer.zones.Zone;
+import org.terasology.world.zones.Zone;
 
 @RegisterWorldGenerator(id = "PrototypeGenerator", displayName = "Prototype generator")
 public class ProtoGenerator extends BaseFacetedWorldGenerator {
@@ -51,48 +51,49 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
-                .addZone(new Zone("Surface", pos -> pos.y() < 110)
+                .addZone(new Zone("Surface", pos -> pos.y() < 121)
                         .addProvider(new ProtoSurfaceProvider())
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer())
-                        .addPreviewLayer(new ProtoBiomeFacetLayer()))
-                .addZone(new Zone("Underground", (pos, region) ->
-                        pos.y() <= (region.getFacet(SurfaceHeightFacet.class).getWorld(pos.x(), pos.getZ()) - 1))
-                        .addRasterizer(new WorldRasterizer() {
-                            @Override
-                            public void initialize() {
-                            }
+                        .addPreviewLayer(new ProtoBiomeFacetLayer())
+                        .addZone(new Zone("Underground", (pos, region) ->
+                                pos.y() <= (region.getFacet(SurfaceHeightFacet.class).getWorld(pos.x(), pos.getZ()) - 1))
+                                .addRasterizer(new WorldRasterizer() {
+                                    @Override
+                                    public void initialize() {
+                                    }
 
-                            @Override
-                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-                                Block stone = blockManager.getBlock("core:stone");
-                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
-                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
-                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
-                                            chunk.setBlock(chunkX, chunkY, chunkZ, stone);
+                                    @Override
+                                    public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                        Block stone = blockManager.getBlock("core:stone");
+                                        for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                            for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                                for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                                    chunk.setBlock(chunkX, chunkY, chunkZ, stone);
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            }
-                        })
-                        .addPreviewLayer(new SurfaceHeightFacetLayer()))
-                .addZone(new Zone("Stripes", pos -> pos.z() % 20 == 0 && pos.y() == 120)
-                        .addRasterizer(new WorldRasterizer() {
-                            @Override
-                            public void initialize() {}
+                                })
+                                .addPreviewLayer(new SurfaceHeightFacetLayer()))
+                        .addZone(new Zone("Stripes", pos -> pos.x() == (pos.y() - 100))
+                                .addRasterizer(new WorldRasterizer() {
+                                    @Override
+                                    public void initialize() {}
 
-                            @Override
-                            public void generateChunk(CoreChunk chunk, Region chunkRegion) {
-                                Block grass = blockManager.getBlock("Core:Grass");
-                                for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
-                                    for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
-                                        for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
-                                            chunk.setBlock(chunkX, chunkY, chunkZ, grass);
+                                    @Override
+                                    public void generateChunk(CoreChunk chunk, Region chunkRegion) {
+                                        Block grass = blockManager.getBlock("Core:glass");
+                                        for (int chunkX = 0; chunkX < chunk.getChunkSizeX(); chunkX++) {
+                                            for (int chunkZ = 0; chunkZ < chunk.getChunkSizeZ(); chunkZ++) {
+                                                for (int chunkY = 0; chunkY < chunk.getChunkSizeY(); chunkY++) {
+                                                    chunk.setBlock(chunkX, chunkY, chunkZ, grass);
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            }
-                        }))
+                                })))
+                .addZone(new Zone("Testing", p -> false))
                 ;
     }
 }
