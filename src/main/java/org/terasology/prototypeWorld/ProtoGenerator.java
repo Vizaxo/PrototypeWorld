@@ -27,7 +27,6 @@ import org.terasology.world.generation.WorldRasterizer;
 import org.terasology.world.generator.RegisterWorldGenerator;
 import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
 import org.terasology.world.viewer.layers.engine.SurfaceHeightFacetLayer;
-import org.terasology.world.zones.LayeredZoneManager;
 import org.terasology.world.zones.LayeredZoneRegionFunction;
 import org.terasology.world.zones.Zone;
 
@@ -54,10 +53,9 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
      */
     @Override
     protected WorldBuilder createWorld() {
-        LayeredZoneManager layeredZoneManager = new LayeredZoneManager();
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
-                .addZone(new Zone("Surface", new LayeredZoneRegionFunction(10, 10, SURFACE, layeredZoneManager))
+                .addZone(new Zone("Surface", new LayeredZoneRegionFunction(10, 10, SURFACE))
                         .addProvider(new ProtoSurfaceProvider())
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer())
@@ -80,8 +78,7 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                                         }
                                     }
                                 })))
-                .addZone(new Zone("Underground",
-                        new LayeredZoneRegionFunction(100, 100, MEDIUM_UNDERGROUND, layeredZoneManager))
+                .addZone(new Zone("Underground", new LayeredZoneRegionFunction(100, 100, MEDIUM_UNDERGROUND))
                         .addRasterizer(new WorldRasterizer() {
                             @Override
                             public void initialize() {
@@ -100,8 +97,7 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                             }
                         })
                         .addPreviewLayer(new SurfaceHeightFacetLayer()))
-                .addZone(new Zone("Glass underfoot",
-                        new LayeredZoneRegionFunction(1, 1, SHALLOW_UNDERGROUND, layeredZoneManager))
+                .addZone(new Zone("Glass underfoot", new LayeredZoneRegionFunction(1, 1, SHALLOW_UNDERGROUND))
                         .addRasterizer(new WorldRasterizer() {
                             @Override
                             public void initialize() {
