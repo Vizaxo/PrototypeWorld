@@ -28,12 +28,12 @@ import org.terasology.world.generator.RegisterWorldGenerator;
 import org.terasology.world.generator.plugin.WorldGeneratorPluginLibrary;
 import org.terasology.world.viewer.layers.engine.SurfaceHeightFacetLayer;
 import org.terasology.world.zones.LayeredZoneRegionFunction;
-import org.terasology.world.zones.MinMaxLayerWidth;
+import org.terasology.world.zones.MinMaxLayerThickness;
 import org.terasology.world.zones.Zone;
 
 import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.MEDIUM_UNDERGROUND;
 import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.SHALLOW_UNDERGROUND;
-import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.SURFACE;
+import static org.terasology.world.zones.LayeredZoneRegionFunction.LayeredZoneOrdering.ABOVE_GROUND;
 
 @RegisterWorldGenerator(id = "PrototypeGenerator", displayName = "Prototype generator")
 public class ProtoGenerator extends BaseFacetedWorldGenerator {
@@ -56,12 +56,12 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld() {
         return new WorldBuilder(worldGeneratorPluginLibrary)
                 .setSeaLevel(0)
-                .addZone(new Zone("Surface", new LayeredZoneRegionFunction(new MinMaxLayerWidth(10, 10), SURFACE))
+                .addZone(new Zone("Surface", new LayeredZoneRegionFunction(new MinMaxLayerThickness(10, 10), ABOVE_GROUND))
                         .addProvider(new ProtoSurfaceProvider())
                         .addProvider(new ProtoBiomeFacetProvider())
                         .addRasterizer(new ProtoRasterizer())
-                        .addPreviewLayer(new ProtoBiomeFacetLayer())
                         .addPreviewLayer(new SurfaceHeightFacetLayer())
+                        .addPreviewLayer(new ProtoBiomeFacetLayer())
                         .addZone(new Zone("Diagonal glass wall", pos -> pos.x() == (pos.y() - 100))
                                 .addRasterizer(new WorldRasterizer() {
                                     @Override
@@ -79,7 +79,7 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                                         }
                                     }
                                 })))
-                .addZone(new Zone("Underground", new LayeredZoneRegionFunction(new MinMaxLayerWidth(100, 100), MEDIUM_UNDERGROUND))
+                .addZone(new Zone("Underground", new LayeredZoneRegionFunction(new MinMaxLayerThickness(100, 100), MEDIUM_UNDERGROUND))
                         .addRasterizer(new WorldRasterizer() {
                             @Override
                             public void initialize() {
@@ -98,7 +98,7 @@ public class ProtoGenerator extends BaseFacetedWorldGenerator {
                             }
                         })
                         .addPreviewLayer(new SurfaceHeightFacetLayer()))
-                .addZone(new Zone("Glass underfoot", new LayeredZoneRegionFunction(new MinMaxLayerWidth(1, 1), SHALLOW_UNDERGROUND))
+                .addZone(new Zone("Glass underfoot", new LayeredZoneRegionFunction(new MinMaxLayerThickness(1, 1), SHALLOW_UNDERGROUND))
                         .addRasterizer(new WorldRasterizer() {
                             @Override
                             public void initialize() {
